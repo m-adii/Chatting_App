@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -31,15 +33,22 @@ class _LoginScreenState extends State<LoginScreen> {
   _handleGoogleBtnClick(){
     //for showing progress bar
     Dialogs.showProgressbar(context);
-    _signInWithGoogle().then((user){
+    _signInWithGoogle().then((user) async {
       //for hiding progress bar
       Navigator.pop(context);
       if(user != null){
           log('\nUser: ${user.user}');
       log('\nUserAdditionalInfo: ${user.additionalUserInfo}');
+
+      if((await Apis.userExists())){
        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
       }
-    
+      else{
+       await Apis.createUser().then((value){
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+       });
+      }
+      }
     });
   }
   Future<UserCredential?> _signInWithGoogle() async {
