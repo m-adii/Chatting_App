@@ -1,6 +1,7 @@
 
 import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/models/chat_user.dart';
+import 'package:chattingapp/screens/profile_screen.dart';
 import 'package:chattingapp/widgets/chat_user_card.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,7 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text("Talkzi"),
         actions: <Widget>[
           IconButton(onPressed: (){}, icon: const Icon(Icons.search)),
-          IconButton(onPressed: (){}, icon: const Icon(Icons.more_vert)),
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen(user:list[0])));
+          }, icon: const Icon(Icons.more_vert)),
         ],
         ),
         floatingActionButton: Padding(

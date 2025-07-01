@@ -21,20 +21,20 @@ class _ChatUsercardsState extends State<ChatUsercards> {
       child:InkWell(
         onTap:(){} ,
        child: ListTile(
-      // leading:CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
+
       leading:ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
         child: CachedNetworkImage(
           width: mq.height * .055,
           height: mq.height * .055,
           imageUrl:widget.user.image,
-          // placeholder: (context, url) => CircularProgressIndicator(),
+       
           errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
              ),
       ),
        title: Text(widget.user.name,style: TextStyle(fontSize: 17,fontWeight: FontWeight.w400),),
        subtitle: Text(widget.user.about,maxLines: 1,),
-      //  trailing: Text("7:10 pm",style: TextStyle(color: Colors.black54),),
+    
        trailing: Container(
         width: 12,
         height: 12,
