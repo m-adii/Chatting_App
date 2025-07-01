@@ -1,8 +1,10 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chattingapp/api/apis.dart';
+import 'package:chattingapp/helper/dialogs.dart';
 import 'package:chattingapp/main.dart';
 import 'package:chattingapp/models/chat_user.dart';
+import 'package:chattingapp/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 class ProfileScreen extends StatefulWidget {
@@ -26,8 +28,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.only(bottom: 40,right: 10),
           child: FloatingActionButton.extended(
             onPressed: ()async{
-              await Apis.auth.signOut();
-              await GoogleSignIn().signOut();
+              Dialogs.showProgressbar(context);
+              await Apis.auth.signOut().then((value) async {
+                await GoogleSignIn().signOut().then((value){
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>LoginScreen()));
+                });
+              });
+              
             },
           backgroundColor: Colors.red,
           shape: RoundedRectangleBorder(  
@@ -45,17 +54,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: mq.width,
             height: mq.height * .07,
           ),
-          ClipRRect(
-          borderRadius: BorderRadiusGeometry.circular(mq.height * .2),
-          child: CachedNetworkImage(
-            width: mq.height * .20,
-            height: mq.height * .20,
-            fit: BoxFit.fill,
-            imageUrl:widget.user.image,
-         
-            errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
-               ),
-        ),
+          Stack(
+            children: [
+              ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(mq.height * .2),
+              child: CachedNetworkImage(
+                width: mq.height * .20,
+                height: mq.height * .20,
+                fit: BoxFit.fill,
+                imageUrl:widget.user.image,
+                       
+                errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
+                   ),
+                      ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: MaterialButton(
+                  onPressed: (){},
+                  elevation: 1,
+                  shape: CircleBorder(),
+                  color: Colors.white,
+                  child: Icon(Icons.edit,color: Colors.blue,),),
+              )        
+            ],
+          ),
         SizedBox(
             height: mq.height * .02,
           ),
@@ -118,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             onPressed: (){}, 
             label: Text('Update',style: TextStyle(color: Colors.white,fontSize: 18),),
-            icon: Icon(Icons.edit,color: Colors.white,size: 25,),
+            icon: Icon(Icons.login,color: Colors.white,size: 25,),
             )
         ],
        ),
