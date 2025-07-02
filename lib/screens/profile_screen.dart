@@ -1,3 +1,6 @@
+
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/helper/dialogs.dart';
@@ -6,6 +9,7 @@ import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 class ProfileScreen extends StatefulWidget {
   final ChatUser user;
   const ProfileScreen({super.key, required this.user});
@@ -16,6 +20,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  String? _image;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -62,12 +67,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Stack(
                   children: [
+                    _image!=null?ClipRRect(
+                    borderRadius: BorderRadiusGeometry.circular(mq.height * .2),
+                    child: Image.file(
+                      File(_image!),
+                      width: mq.height * .20,
+                      height: mq.height * .20,
+                      fit: BoxFit.cover,
+                      
+                         ),
+                            ):
                     ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(mq.height * .2),
                     child: CachedNetworkImage(
                       width: mq.height * .20,
                       height: mq.height * .20,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       imageUrl:widget.user.image,
                              
                       errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
@@ -195,15 +210,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: Colors.white,
                           shape: const CircleBorder(),
                           fixedSize: Size(mq.width * .3, mq.height * .15)),
-                  onPressed: (){},
-                  child: Image.asset('images/camera.png')),
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    // Pick an image.
+                    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                    if(image !=null){
+                      // log('Image path: ${image.path}');
+                      setState(() {
+                        _image=image.path;
+                      });
+                      //for hiding bottom sheet
+                      Navigator.pop(context);
+                    }
+                    
+                  },
+                  child: Image.asset('images/gallery.png')),
                   ElevatedButton(
                        style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           shape: const CircleBorder(),
                           fixedSize: Size(mq.width * .3, mq.height * .15)),
-                  onPressed: (){},
-                  child: Image.asset('images/gallery.png')),
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    // Pick an image.
+                    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                    if(image !=null){
+                      // log('Image path: ${image.path}');
+                      setState(() {
+                        _image=image.path;
+                      });
+                      //for hiding bottom sheet
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Image.asset('images/camera.png')),
                 ]
                 ),
       ],
