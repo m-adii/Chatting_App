@@ -3,6 +3,7 @@ import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/screens/profile_screen.dart';
 import 'package:chattingapp/widgets/chat_user_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 class HomeScreen extends StatefulWidget {
@@ -13,7 +14,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<ChatUser> list =[];
+  List<ChatUser> _list =[];
+   // for storing searched items
+  final List<ChatUser> _searchList=[];
+   // for storing search status
+  bool _isSearching = false;
   @override
   void initState() {
     super.initState();
@@ -24,9 +29,32 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.home),
-        title: const Text("Talkzi"),
+        title:  _isSearching
+                ? TextField(
+                    decoration: const InputDecoration(
+                        border: InputBorder.none, hintText: 'Name, Email, ...',hintStyle: TextStyle(color: Colors.white)),
+                        autofocus: true,
+                        style: TextStyle(color: Colors.white,fontSize: 18,letterSpacing: 1),
+                        //when search text changes then updated search list
+                        onChanged: (val) {
+                        _searchList.clear();
+                         for (var i in _list) {
+                        if (i.name.toLowerCase().contains(val.toLowerCase()) ||
+                            i.email.toLowerCase().contains(val.toLowerCase())) {
+                          _searchList.add(i);
+                        }
+                        setState(() {
+                          _searchList;
+                        });
+                      }
+                        },
+                        ):Text("Talkzi"),
         actions: <Widget>[
-          IconButton(onPressed: (){}, icon: const Icon(Icons.search)),
+          IconButton(tooltip: 'Search',
+                  onPressed: () => setState(() => _isSearching = !_isSearching),
+                  icon: Icon(_isSearching
+                      ? CupertinoIcons.clear_circled_solid
+                      : CupertinoIcons.search)),
           IconButton(onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (_)=>ProfileScreen(user:Apis.me)));
           }, icon: const Icon(Icons.more_vert)),
@@ -59,13 +87,13 @@ class _HomeScreenState extends State<HomeScreen> {
           case ConnectionState.done:
           
           final data = snapshot.data?.docs;
-         list=data?.map((e)=>ChatUser.fromJson(e.data())).toList() ?? [];
-         if(list.isNotEmpty){
+         _list=data?.map((e)=>ChatUser.fromJson(e.data())).toList() ?? [];
+         if(_list.isNotEmpty){
           return ListView.builder(
-        itemCount: list.length,
+        itemCount:_isSearching ? _searchList.length: _list.length,
         physics: ClampingScrollPhysics(),
         itemBuilder: (context,index){
-        return  ChatUsercards(user: list[index],);
+        return  ChatUsercards(user:_isSearching? _searchList[index]: _list[index],);
         // return Text("Name: ${list[index]}");
        }
        );
