@@ -63,4 +63,11 @@ class Apis {
       'about ':me.about
     });
   }
+  //chat screen related apis
+  //for getting all messages of a spesific conversation from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(){
+    return firestore
+    .collection('messages')
+    .snapshots();
+  }
 }

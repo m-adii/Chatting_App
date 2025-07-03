@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/models/chat_user.dart';
+import 'package:chattingapp/models/message.dart';
+import 'package:chattingapp/widgets/message_card.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -13,6 +16,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  List<Message> _list = [];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -21,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
         ),
+        backgroundColor: const Color.fromARGB(255, 227, 242, 255),
         body: Column(
           children: [
             
@@ -80,13 +85,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 
               //   final data = snapshot.data?.docs;
               //  _list=data?.map((e)=>ChatUser.fromJson(e.data())).toList() ?? [];
-              final _list= [];
+              _list.clear();
+               _list.add(Message(toId: 'xyz', msg: 'hii', read: '12:00 AM', type: Type.text, fromId: Apis.user.uid, sent: ''));
+               _list.add(Message(toId: Apis.user.uid, msg: 'hello', read: '', type: Type.text, fromId: 'xyz', sent: '12:00 AM'));
                if(_list.isNotEmpty){
                 return ListView.builder(
               itemCount:_list.length,
               physics: ClampingScrollPhysics(),
               itemBuilder: (context,index){
-              return Text("Message: ${_list[index]}");
+              return MessageCard(message: _list[index],);
              }
              );
                }else{
