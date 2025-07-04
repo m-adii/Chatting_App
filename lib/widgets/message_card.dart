@@ -54,9 +54,9 @@ class _MessageCardState extends State<MessageCard> {
         Row(
           children: [
             SizedBox(width: mq.width * .04),
-            Icon(Icons.done_all_rounded,color: Colors.blue,size: 22,),
+            const Icon(Icons.done_all_rounded,color: Colors.blue,size: 22,),
             SizedBox(width: mq.width * .01),
-            Text(widget.message.read,style: TextStyle(color: Colors.black54,fontSize: 12),),
+            Text(widget.message.read,style: const TextStyle(color: Colors.black54,fontSize: 12),),
           ],
         ),
         Flexible(

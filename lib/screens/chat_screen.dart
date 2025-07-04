@@ -1,3 +1,5 @@
+
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/models/chat_user.dart';
@@ -17,6 +19,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   List<Message> _list = [];
+  final _textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,22 +75,20 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _chatting(){
     return Expanded(
       child: StreamBuilder(
-            // stream: Apis.getAllUsers(),
+            stream: Apis.getAllMessages(widget.user),
              builder: (context, snapshot) {
               switch(snapshot.connectionState){
                 //if data is loading
                 case ConnectionState.waiting:
                 case ConnectionState.none:
-                // return const Center(child: CircularProgressIndicator());
+                return const SizedBox();
                 //is some or all data is loaded then show it
                 case ConnectionState.active:
                 case ConnectionState.done:
                 
-              //   final data = snapshot.data?.docs;
-              //  _list=data?.map((e)=>ChatUser.fromJson(e.data())).toList() ?? [];
-              _list.clear();
-               _list.add(Message(toId: 'xyz', msg: 'hii', read: '12:00 AM', type: Type.text, fromId: Apis.user.uid, sent: ''));
-               _list.add(Message(toId: Apis.user.uid, msg: 'hello', read: '', type: Type.text, fromId: 'xyz', sent: '12:00 AM'));
+               final data = snapshot.data?.docs;
+               
+              _list=data?.map((e)=>Message.fromJson(e.data())).toList() ?? [];
                if(_list.isNotEmpty){
                 return ListView.builder(
               itemCount:_list.length,
@@ -102,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
               }
           
               
-             }, stream: null,
+             }, 
            ),
     );
   }
@@ -120,6 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     }, 
                     icon: Icon(Icons.emoji_emotions,color: Colors.blue,)),
                   Expanded(child: TextField(
+                    controller: _textController,
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(
@@ -138,7 +140,12 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-          MaterialButton(onPressed: (){},
+          MaterialButton(onPressed: (){
+            if(_textController.text.isNotEmpty){
+              Apis.sendMessage(widget.user, _textController.text);
+              _textController.text='';
+            }
+          },
           minWidth: 0,
           padding: EdgeInsets.only(bottom: 10,top: 10,left: 10,right: 5),
           shape: CircleBorder(),

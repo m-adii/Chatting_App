@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     Future.delayed(Duration(milliseconds: 1500), ()async{
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent,statusBarColor: Colors.transparent));
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(systemNavigationBarColor: Colors.black,statusBarColor: Colors.black));
       // ignore: use_build_context_synchronously
       if(Apis.auth.currentUser != null){
             log('\nUser: ${Apis.auth.currentUser}');
