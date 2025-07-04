@@ -1,4 +1,5 @@
 import 'package:chattingapp/api/apis.dart';
+import 'package:chattingapp/helper/my_date_util.dart';
 import 'package:chattingapp/main.dart';
 import 'package:chattingapp/models/message.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,9 @@ class _MessageCardState extends State<MessageCard> {
   }
   //sender messages
   Widget _blueMessage(){
+    if(widget.message.read.isEmpty){
+      Apis.updateMessageReadStatus(widget.message);
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -34,12 +38,14 @@ class _MessageCardState extends State<MessageCard> {
               bottomRight: Radius.circular(20)
               )
            ),
-            child: Text(widget.message.msg,style: TextStyle(color: Colors.black87,fontSize: 16),),
+            child: Text(widget.message.msg,
+            style: TextStyle(color: Colors.black87,fontSize: 16),),
           ),
         ),
         Padding(
           padding: EdgeInsets.only(right: mq.width * .08),
-          child: Text(widget.message.sent,style: TextStyle(color: Colors.black54,fontSize: 12),),
+          child: Text(MyDateUtil.getFormattedTime(context: context, time: widget.message.sent),
+          style: TextStyle(color: Colors.black54,fontSize: 12),),
         ),
       ],
     );
@@ -54,9 +60,11 @@ class _MessageCardState extends State<MessageCard> {
         Row(
           children: [
             SizedBox(width: mq.width * .04),
+            if(widget.message.read.isNotEmpty)
             const Icon(Icons.done_all_rounded,color: Colors.blue,size: 22,),
             SizedBox(width: mq.width * .01),
-            Text(widget.message.read,style: const TextStyle(color: Colors.black54,fontSize: 12),),
+            Text(MyDateUtil.getFormattedTime(context: context, time: widget.message.sent),
+            style: const TextStyle(color: Colors.black54,fontSize: 12),),
           ],
         ),
         Flexible(
