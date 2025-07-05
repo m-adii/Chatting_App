@@ -17,7 +17,9 @@ class MyDateUtil {
         now.year == sent.year) {
       return TimeOfDay.fromDateTime(sent).format(context);
     }
-      return '${sent.day} ${_getMonth(sent)}';
+      return showYear
+        ? '${sent.day} ${_getMonth(sent)} ${sent.year}'
+        : '${sent.day} ${_getMonth(sent)}';
       }
        //get formatted last active time of user in chat screen
   static String getLastActiveTime(

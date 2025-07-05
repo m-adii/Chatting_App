@@ -7,6 +7,7 @@ import 'package:chattingapp/helper/dialogs.dart';
 import 'package:chattingapp/main.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/screens/auth/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         appBar: AppBar(
           leading:  IconButton(onPressed: (){
             Navigator.pop(context);
-          }, icon: Icon(Icons.home)),
+          }, icon: Icon(Icons.arrow_back_ios,size: 20,)),
           title: const Text("Profile Screen"),
          
           ),
@@ -39,10 +40,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: FloatingActionButton.extended(
               onPressed: ()async{
                 Dialogs.showProgressbar(context);
+                await Apis.updateActiveStatus(false);
                 await Apis.auth.signOut().then((value) async {
                   await GoogleSignIn().signOut().then((value){
                     Navigator.pop(context);
                     Navigator.pop(context);
+                    Apis.auth =FirebaseAuth.instance;
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>LoginScreen()));
                   });
                 });

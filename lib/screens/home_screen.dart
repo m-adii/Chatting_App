@@ -29,13 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
     Apis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((handler){
       // log('Message ${handler}');
+      if(Apis.auth.currentUser != null){
       if(handler.toString().contains('resume')) {
         Apis.updateActiveStatus(true);
       }
       if(handler.toString().contains('pause')) {
         Apis.updateActiveStatus(false);
       }
-     return Future.value(handler);
+     
+    }
+    return Future.value(handler);
     });
   }
   @override

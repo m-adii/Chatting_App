@@ -4,6 +4,7 @@ import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/helper/my_date_util.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/models/message.dart';
+import 'package:chattingapp/screens/view_profile_screen.dart';
 import 'package:chattingapp/widgets/message_card.dart';
 import 'package:flutter_emoji_picker/flutter_emoji_picker.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _appBar(){
     return InkWell(
       onTap: () {
-        
+        Navigator.push(context, MaterialPageRoute(builder: (_)=>ViewProfileScreen(user: widget.user)));
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 20),
@@ -91,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
               IconButton(onPressed: (){
                 Navigator.pop(context);
               }, 
-              icon: Icon(Icons.arrow_back,color: Colors.white,)),
+              icon: Icon(Icons.arrow_back_ios,color: Colors.white,size: 20,)),
               ClipRRect(
               borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
               child: CachedNetworkImage(
