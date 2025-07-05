@@ -121,4 +121,18 @@ class Apis {
     .limit(1)
     .snapshots();
   }
+  //delete message
+  static Future<void> deleteMessage(Message message)async{
+  await firestore
+    .collection('chats/${getConversationID(message.toId)}/messages/')
+    .doc(message.sent)
+    .delete();
+  }
+  //update message
+  static Future<void> updateMessage(Message message, String updatedMsg)async{
+  await firestore
+    .collection('chats/${getConversationID(message.toId)}/messages/')
+    .doc(message.sent)
+    .update({'msg':updatedMsg});
+  }
 }
