@@ -47,6 +47,9 @@ dependencies:
   cached_network_image: ^3.2.3
   # for image picker 
   image_picker: ^1.1.2
+  # for showing emojies
+  # emoji_picker_flutter: ^1.6.2
+  flutter_emoji_picker: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

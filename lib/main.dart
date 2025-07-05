@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_emoji_picker/flutter_emoji_picker.dart';
 import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 
@@ -10,7 +11,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   _initializeFirebase();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown]).then((onValue){
-  runApp(const MyApp());
+  runApp(EmojiProvider(child: const MyApp()));
 });
   }
   

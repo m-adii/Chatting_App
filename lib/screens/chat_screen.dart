@@ -1,10 +1,10 @@
-
-
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/models/message.dart';
 import 'package:chattingapp/widgets/message_card.dart';
+import 'package:flutter_emoji_picker/flutter_emoji_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -20,20 +20,54 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   List<Message> _list = [];
   final _textController = TextEditingController();
+
+   bool _showEmoji = false;
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          flexibleSpace: _appBar(),
-        ),
-        backgroundColor: const Color.fromARGB(255, 227, 242, 255),
-        body: Column(
-          children: [
-            
-            _chatting(),
-            _chatInput()],
+    return GestureDetector(
+      onTap: ()=>FocusScope.of(context).unfocus(),
+      child: PopScope(
+         canPop: false,
+          onPopInvokedWithResult: (_, __) {
+          if (_showEmoji) {
+            setState(() => _showEmoji = !_showEmoji);
+            return;
+          }
+        Future.delayed(const Duration(milliseconds: 300), () {
+            try {
+              if (Navigator.canPop(context)) Navigator.pop(context);
+            } catch (e) {
+              log('ErrorPop: $e');
+            }
+          });
+        },
+
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            flexibleSpace: _appBar(),
+          ),
+          backgroundColor: const Color.fromARGB(255, 227, 242, 255),
+          body: Column(
+            children: [
+              
+              _chatting(),
+              _chatInput(),
+              
+              // if (_showEmoji)
+  // SizedBox(
+  //   height: mq.height * 0.3,
+  //   child: FlutterEmojiPicker(
+  //     onEmojiSelected: (emoji) {
+  //       _textController.text += emoji;
+  //       _textController.selection = TextSelection.fromPosition(
+  //         TextPosition(offset: _textController.text.length),
+  //       );
+  //     },
+  //   ),
+  // ),
+              ],
+          ),
         ),
       ),
     );
@@ -117,13 +151,28 @@ class _ChatScreenState extends State<ChatScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               child: Row(
                 children: [
-                  IconButton(onPressed: (){
-                    }, 
-                    icon: Icon(Icons.emoji_emotions,color: Colors.blue,)),
+                  EmojiButton(
+                  emojiPickerViewConfiguration: EmojiPickerViewConfiguration(
+                    viewType: ViewType.dialog,
+                    onEmojiSelected: (emoji) {
+                      _textController.text += emoji;
+                      _textController.selection =
+                          TextSelection.fromPosition(
+                        TextPosition(offset: _textController.text.length),
+                      );
+                    },
+                  ),
+                  child: const Icon(Icons.emoji_emotions, color: Colors.blue),
+                ),
                   Expanded(child: TextField(
                     controller: _textController,
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
+                    onTap: () {
+                      // if(_showEmoji) {
+                      //   setState(()=>_showEmoji =!_showEmoji);
+                      // }
+                    },
                     decoration: InputDecoration(
                       hintText: "Type Something..",hintStyle: TextStyle(color: Colors.blue.shade300,fontSize: 15),
                       border: InputBorder.none
