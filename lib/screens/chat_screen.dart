@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chattingapp/api/apis.dart';
+import 'package:chattingapp/helper/my_date_util.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/models/message.dart';
 import 'package:chattingapp/widgets/message_card.dart';
@@ -80,33 +81,43 @@ class _ChatScreenState extends State<ChatScreen> {
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 20),
-        child: Row(
-          
-          children: [
-            IconButton(onPressed: (){
-              Navigator.pop(context);
-            }, 
-            icon: Icon(Icons.arrow_back,color: Colors.white,)),
-            ClipRRect(
-            borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
-            child: CachedNetworkImage(
-              width: mq.height * .045,
-              height: mq.height * .045,
-              imageUrl:widget.user.image,
-           
-              errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
-                 ),
-          ),
-          SizedBox(width: 10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: StreamBuilder(
+          stream: Apis.getUserInfo(widget.user),builder: (context, snapshot) {
+            final data = snapshot.data?.docs;
+        final list=data?.map((e)=>ChatUser.fromJson(e.data())).toList() ?? [];
+               
+          return Row(
             children: [
-              Text(widget.user.name,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 15)),
-              Text("Last seen not awailable",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 12)),
+              IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, 
+              icon: Icon(Icons.arrow_back,color: Colors.white,)),
+              ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
+              child: CachedNetworkImage(
+                width: mq.height * .045,
+                height: mq.height * .045,
+                imageUrl:widget.user.image,
+             
+                errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
+                   ),
+            ),
+            SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(list.isNotEmpty ? list[0].name:widget.user.name,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 15)),
+                Text(list.isNotEmpty? 
+                list[0].isOnline? 'Online'
+                : MyDateUtil.getLastActiveTime(context: context, lastActive: list[0].lastActive)
+                :MyDateUtil.getLastActiveTime(context: context, lastActive:widget.user.lastActive),
+                style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 12)),
+              ],
+            )
             ],
-          )
-          ],
+          );
+          },
         ),
       ),
     );

@@ -1,4 +1,6 @@
 
+
+
 import 'package:chattingapp/api/apis.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/screens/profile_screen.dart';
@@ -24,6 +26,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Apis.getSelfInfo();
+    Apis.updateActiveStatus(true);
+    SystemChannels.lifecycle.setMessageHandler((handler){
+      // log('Message ${handler}');
+      if(handler.toString().contains('resume')) {
+        Apis.updateActiveStatus(true);
+      }
+      if(handler.toString().contains('pause')) {
+        Apis.updateActiveStatus(false);
+      }
+     return Future.value(handler);
+    });
   }
   @override
   Widget build(BuildContext context) {
