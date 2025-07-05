@@ -5,6 +5,7 @@ import 'package:chattingapp/main.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/models/message.dart';
 import 'package:chattingapp/screens/chat_screen.dart';
+import 'package:chattingapp/widgets/dialogs/profile_dialog.dart';
 import 'package:flutter/material.dart';
 
 class ChatUsercards extends StatefulWidget {
@@ -39,15 +40,22 @@ class _ChatUsercardsState extends State<ChatUsercards> {
              }
 
           return  ListTile(
-      leading:ClipRRect(
-        borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
-        child: CachedNetworkImage(
-          width: mq.height * .055,
-          height: mq.height * .055,
-          imageUrl:widget.user.image,
-       
-          errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
-             ),
+      leading:InkWell(
+        onTap: (){
+          showDialog(context: context, builder: (_)=>
+          ProfileDialog(user: widget.user,)
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
+          child: CachedNetworkImage(
+            width: mq.height * .055,
+            height: mq.height * .055,
+            imageUrl:widget.user.image,
+         
+            errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
+               ),
+        ),
       ),
        title: Text(widget.user.name,style: TextStyle(fontSize: 17,fontWeight: FontWeight.w400),),
        subtitle: Text(_message != null ? _message!.msg : widget.user.about,maxLines: 1,),
