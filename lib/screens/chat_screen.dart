@@ -6,6 +6,7 @@ import 'package:chattingapp/models/message.dart';
 import 'package:chattingapp/widgets/message_card.dart';
 import 'package:flutter_emoji_picker/flutter_emoji_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../main.dart';
 
@@ -77,32 +78,36 @@ class _ChatScreenState extends State<ChatScreen> {
       onTap: () {
         
       },
-      child: Row(
-        children: [
-          IconButton(onPressed: (){
-            Navigator.pop(context);
-          }, 
-          icon: Icon(Icons.arrow_back,color: Colors.white,)),
-          ClipRRect(
-          borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
-          child: CachedNetworkImage(
-            width: mq.height * .045,
-            height: mq.height * .045,
-            imageUrl:widget.user.image,
-         
-            errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
-               ),
-        ),
-        SizedBox(width: 10),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Row(
+          
           children: [
-            Text(widget.user.name,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 15)),
-            Text("Last seen not awailable",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 12)),
+            IconButton(onPressed: (){
+              Navigator.pop(context);
+            }, 
+            icon: Icon(Icons.arrow_back,color: Colors.white,)),
+            ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(mq.height * .3),
+            child: CachedNetworkImage(
+              width: mq.height * .045,
+              height: mq.height * .045,
+              imageUrl:widget.user.image,
+           
+              errorWidget: (context, url, error) =>CircleAvatar(backgroundColor: Colors.blue,child: Icon(Icons.person_2_outlined,color: Colors.white,),),
+                 ),
+          ),
+          SizedBox(width: 10),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.user.name,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 15)),
+              Text("Last seen not awailable",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize: 12)),
+            ],
+          )
           ],
-        )
-        ],
+        ),
       ),
     );
   }
@@ -125,6 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
               _list=data?.map((e)=>Message.fromJson(e.data())).toList() ?? [];
                if(_list.isNotEmpty){
                 return ListView.builder(
+                  reverse: true,
               itemCount:_list.length,
               physics: ClampingScrollPhysics(),
               itemBuilder: (context,index){
@@ -132,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
              }
              );
                }else{
-                return Center(child: Text('Say Hii! 👋',style: TextStyle(fontSize: 20,color: Colors.blue.shade100),));
+                return Center(child: Text('Say Hii! 👋',style: TextStyle(fontSize: 20,color: Colors.blue.shade300),));
                }
               }
           
@@ -178,10 +184,30 @@ class _ChatScreenState extends State<ChatScreen> {
                       border: InputBorder.none
                     ),
                   )),
-                  IconButton(onPressed: (){
+                  IconButton(onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    // Pick an image.
+                    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                    if(image !=null){
+                      // log('Image path: ${image.path}');
+                      setState(() {
+                      });
+                      //for hiding bottom sheet
+                      Navigator.pop(context);
+                    }
                     }, 
                     icon: Icon(Icons.image,color: Colors.blue,size: 28)),
-                  IconButton(onPressed: (){
+                  IconButton(onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    // Pick an image.
+                    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                    if(image !=null){
+                      // log('Image path: ${image.path}');
+                      setState(() {
+                      });
+                      //for hiding bottom sheet
+                      Navigator.pop(context);
+                    }
                     }, 
                     icon: Icon(Icons.camera_alt,color: Colors.blue,size: 28,)),
                     SizedBox(width: 5,)

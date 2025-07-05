@@ -76,6 +76,7 @@ class Apis {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(ChatUser user){
     return firestore
     .collection('chats/${getConversationID(user.id)}/messages/')
+    .orderBy('sent', descending: true)
     .snapshots();
   }
  //for sending  messages

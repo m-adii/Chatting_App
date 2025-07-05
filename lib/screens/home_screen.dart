@@ -43,7 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: Scaffold(
           appBar: AppBar(
-            leading: const Icon(Icons.home),
+            leading:  IconButton(onPressed: (){
+            setState(() {
+              
+            });
+          }, icon: Icon(Icons.home)),
             title:  _isSearching
                     ? TextField(
                         decoration: const InputDecoration(
@@ -113,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
            }
            );
              }else{
-              return Center(child: Text('No connection found!',style: TextStyle(fontSize: 20,color: Colors.blue),));
+              return Center(child: Text('No connection found!',style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700, color: Colors.blue.shade300),));
              }
             }
         

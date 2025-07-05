@@ -28,12 +28,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          leading: const Icon(Icons.home),
+          leading:  IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.home)),
           title: const Text("Profile Screen"),
          
           ),
           floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 40,right: 10),
+            padding: const EdgeInsets.only(bottom: 25,right: 10),
             child: FloatingActionButton.extended(
               onPressed: ()async{
                 Dialogs.showProgressbar(context);
@@ -63,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 SizedBox(
                   width: mq.width,
-                  height: mq.height * .07,
+                  height: mq.height * .05,
                 ),
                 Stack(
                   children: [
@@ -107,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Text(widget.user.email,style:const TextStyle(color: Colors.black54,fontSize: 16),),
                       SizedBox(
-                  height: mq.height * .07,
+                  height: mq.height * .06,
                 ),
                 TextFormField(
                   onSaved: (val)=>Apis.me.name= val ?? '',
@@ -133,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                  ),
                 ),
                  SizedBox(
-                  height: mq.height * .03,
+                  height: mq.height * .02,
                 ),
                 TextFormField(
                    onSaved: (val)=>Apis.me.about= val ?? '',
@@ -159,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                  ),
                 ),
                  SizedBox(
-                  height: mq.height * .05,
+                  height: mq.height * .03,
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
