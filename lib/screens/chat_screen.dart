@@ -229,7 +229,11 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           MaterialButton(onPressed: (){
             if(_textController.text.isNotEmpty){
-              Apis.sendMessage(widget.user, _textController.text);
+              if(_list.isEmpty){
+                Apis.sendFirstMessage(widget.user, _textController.text);
+              }else {
+                Apis.sendMessage(widget.user, _textController.text);
+              }
               _textController.text='';
             }
           },

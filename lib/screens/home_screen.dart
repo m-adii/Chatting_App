@@ -1,14 +1,12 @@
-
-
-
 import 'package:chattingapp/api/apis.dart';
+import 'package:chattingapp/helper/dialogs.dart';
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/screens/profile_screen.dart';
 import 'package:chattingapp/widgets/chat_user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -98,9 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(bottom: 50,right: 10),
               child: FloatingActionButton(
-                onPressed: ()async{
-                  await Apis.auth.signOut();
-                  await GoogleSignIn().signOut();
+                onPressed: (){
+                  _addChatUserDialog();
                 },
               backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(  
@@ -109,14 +106,27 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Icon(Icons.add_comment_rounded,color: Colors.white,),
               ),
             ),
-         body: StreamBuilder(
-          stream: Apis.getAllUsers(),
+         body:StreamBuilder(
+          stream: Apis.getMyUsersId(),
+          builder: (context, snapshot) {
+           switch(snapshot.connectionState){
+              //if data is loading
+              case ConnectionState.waiting:
+              case ConnectionState.none:
+              return const Center(child: CircularProgressIndicator());
+              //is some or all data is loaded then show it
+              case ConnectionState.active:
+              case ConnectionState.done:
+             return StreamBuilder(
+          stream: Apis.getAllUsers(
+            snapshot.data?.docs.map((e)=> e.id).toList() ?? []
+          ),
            builder: (context, snapshot) {
             switch(snapshot.connectionState){
               //if data is loading
               case ConnectionState.waiting:
               case ConnectionState.none:
-              return const Center(child: CircularProgressIndicator());
+              // return const Center(child: CircularProgressIndicator());
               //is some or all data is loaded then show it
               case ConnectionState.active:
               case ConnectionState.done:
@@ -139,9 +149,83 @@ class _HomeScreenState extends State<HomeScreen> {
         
             
            },
-         ),
+         );
+           }
+           
+         },)
          ),
       ),
     );
+  }
+  void _addChatUserDialog() {
+    String email = '';
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 20, bottom: 10),
+
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+
+              //title
+              title: const Row(
+                children: [
+                  Icon(
+                    Icons.person_add,
+                    color: Colors.blue,
+                    size: 28,
+                  ),
+                  Text(' Add Contact')
+                ],
+              ),
+
+              //content
+              content: TextFormField(
+
+                maxLines: null,
+                onChanged: (value) => email = value,
+                decoration: const InputDecoration(
+                  hintText: "Email ID",
+                  prefixIcon: Icon(Icons.email,color: Colors.blue,),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)))),
+              ),
+
+              //actions
+              actions: [
+                //cancel button
+                MaterialButton(
+                    onPressed: () {
+                      //hide alert dialog
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                    )),
+
+                //Add button
+                MaterialButton(
+                    onPressed: () async {
+                      
+                      //hide alert dialog
+                      Navigator.pop(context);
+                        if(email.isNotEmpty) {
+                        await Apis.addChatUser(email).then((value){
+                          if(!value){
+                            Dialogs.showSnackbar(context, 'User Does not Exist!');
+                          }
+                        });
+                      }
+                      
+                    },
+                    child: const Text(
+                      'Add',
+                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                    ))
+              ],
+            ));
   }
 }

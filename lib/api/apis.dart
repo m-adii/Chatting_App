@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chattingapp/models/chat_user.dart';
 import 'package:chattingapp/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +22,27 @@ class Apis {
     .doc(user.uid)
     .get())
   .exists;
+  }
+  // for add a chat user for our conversation
+   static Future<bool> addChatUser(String email)async{
+    final data = await firestore
+    .collection('users')
+    .where('email' , isEqualTo: email)
+    .get();
+    log('data : ${data.docs}');
+  if(data.docs.isNotEmpty && data.docs.first.id != user.uid){
+    log('user exist:${data.docs.first.data()} ');
+     firestore
+    .collection('users')
+    .doc(user.uid)
+    .collection('my_users')
+    .doc(data.docs.first.id)
+    .set({});
+    return true;
+  }
+  else{
+    return false;
+  }
   }
  // for getting self info
  static Future<void> getSelfInfo()async{
@@ -50,9 +73,31 @@ class Apis {
     .doc(user.uid).set(chatUser.toJson());
     
   }
+  //for getting id's of known users from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUsersId(){
+    return firestore
+    .collection('users')
+    .doc(user.uid)
+    .collection('my_users')
+    .snapshots();
+  }
   //for getting all users from firestore database
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(){
-    return firestore.collection('users').where('id',isNotEqualTo: user.uid).snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(List<String>userIds){
+    return firestore
+    .collection('users')
+    .where('id',whereIn: userIds.isEmpty ? [''] : userIds)
+    .snapshots();
+  }
+  //for updating user information
+    static Future<void> sendFirstMessage(ChatUser chatUser,String msg)async{
+    await firestore
+    .collection('users')
+    .doc(chatUser.id).collection('my_users')
+    .doc(user.uid)
+    .set({})
+    .then((value){
+     sendMessage(chatUser, msg);
+    });
   }
   //for updating user information
     static Future<void> updateUserInfo()async{
